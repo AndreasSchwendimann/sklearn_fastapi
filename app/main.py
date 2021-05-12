@@ -1,49 +1,26 @@
 from fastapi import FastAPI, Query
 from typing import List
 
-from pydantic import BaseModel
 from joblib import load
-import pandas as pd
-
-# define model for post request. Not needed if just implementing get
-class ModelParams(BaseModel):
-    param1: int
-    param2: int
-    param3: float
-    param4: float
-    param5: float
-    param6: float
-    param7: int
-    param8: int
-    param9: float
-    param10: float
-    param11: float
-    param12: float
-    param13: float
-    param14: float
+from pandas import read_csv
 
 
 app = FastAPI()
 
 loaded_model = load("../model/classifier.joblib")
 loaded_scaler = load("../model/scaler.joblib")
-reference_table = pd.read_csv("../model/cutoff_table.csv")
-
-
-def get_prediction(data, duration):
-    print("start prediction ----------------------")
-    return apply_model(data, duration)
+reference_table = read_csv("../model/cutoff_table.csv")
 
 
 def apply_model(
     data, duration, model=loaded_model, scaler=loaded_scaler, reference=reference_table
 ):
     # apply scaler & model to new meeting
-    data_scaled = scaler.transform(data)
+    data_scaled = scaler.transform([data+[duration]])
     predicted_cluster = model.predict(data_scaled)[0]
     # subset reference & rank new meeting duration
     if int(duration) > int(
-        reference_table[reference_table.cluster == int(predicted_cluster)].cutoff
+        reference[reference.cluster == int(predicted_cluster)].cutoff
     ):
         show_alert = True
     else:
@@ -58,12 +35,15 @@ async def read_root():
 
 @app.get("/predict/")
 def predict(
-    p8: float, params: List[str] = Query(["p1", "p2", "p3", "p4", "p5", "p6", "p7"])
+    duration: int, meeting_data: List[str] = Query(["documents", "members",
+                                     "lvl0", "lvl1", "lvl2", "lvl3",
+                                     "items",
+                                     "cat1","cat2","cat3","cat4","cat5","cat6"])
 ):
 
-    data = [list(map(float, params[0].split(",")))]
-    kwargs = {"param8": p8, "data": data}
+    data = list(map(float, meeting_data[0].split(",")))
+    kwargs = {"data": data, "duration": duration}
     print(kwargs)
 
-    pred = get_prediction(data, p8)
+    pred = apply_model(data, duration)
     return pred
