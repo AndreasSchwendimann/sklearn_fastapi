@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
 from joblib import load
@@ -10,6 +11,13 @@ app = FastAPI()
 loaded_model = load("../model/classifier.joblib")
 loaded_scaler = load("../model/scaler.joblib")
 reference_table = read_csv("../model/cutoff_table.csv")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def apply_model(
