@@ -7,8 +7,8 @@ Clone this repository, navigate to the cloned folder to build the image and star
 ```bash
 https://github.com/AndreasSchwendimann/trialday-api
 
-docker build -t modelAPI . 
-docker run -p 80:80 modelAPI
+docker build -t modelapi . 
+docker run -p 80:80 modelapi
 ```
 
 ## Documentation
