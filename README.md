@@ -5,10 +5,10 @@ This repository can be used to deploy a local instance of the pipeline used in t
 Clone this repository, navigate to the cloned folder to build the image and start a container:
 
 ```bash
-git clone https://github.com/AndreasSchwendimann/sklearn_fastapi
+https://github.com/AndreasSchwendimann/trialday-api
 
-docker build -t modelAPI . 
-docker run -p 80:80 modelAPI
+docker build -t modelapi . 
+docker run -p 80:80 modelapi
 ```
 
 ## Documentation
