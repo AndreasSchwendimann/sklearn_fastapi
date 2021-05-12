@@ -1,47 +1,59 @@
 from fastapi import FastAPI
-from joblib import load
 from pydantic import  BaseModel
-
+from joblib import load
+import pandas as pd
 
 # define model for post request. Not needed if just implementing get
 class ModelParams(BaseModel):
-    param1: float
-    param2: float
-
+    param1: int
+    param2: int
+    param3: float
+    param4: float
+    param5: float
+    param6: float
+    param7: int
+    param8: int
+    param9: float
+    param10: float
+    param11: float
+    param12: float
+    param13: float
+    param14: float
 
 app = FastAPI()
 
-clf = load('/model/model_1.joblib')
+loaded_model = load('../model/classifier.joblib')
+loaded_scaler = load('../model/scaler.joblib')
+reference_table = pd.read_csv('../model/cutoff_table.csv')
 
-def get_prediction(param1, param2):
-    
-    x = [[param1, param2]]
 
-    y = clf.predict(x)[0]  # just get single value
-    prob = clf.predict_proba(x)[0].tolist()  # send to list for return
+def get_prediction(data, duration):
+    print('start prediction ----------------------')
+    return apply_model(data, duration)
 
-    return {'prediction': int(y), 'probability': prob}
+
+def apply_model(data, duration, model=loaded_model, scaler=loaded_scaler, reference=reference_table):
+    # apply scaler & model to new meeting
+    data_scaled = scaler.transform(data)
+    predicted_cluster = model.predict(data_scaled)[0]
+    # subset reference & rank new meeting duration
+    print(int(predicted_cluster))
+    print(reference_table.cluster)
+    if int(duration) > int(reference_table[reference_table.cluster == int(predicted_cluster)].cutoff):
+        show_alert = True
+    else:
+        show_alert = False
+    return show_alert
 
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/predict/{param1}/{param2}")
-def predict(param1: float, param2: float):
-
-    pred = get_prediction(param1, param2)
-
-    return pred
-
-
-@app.post("/predict-post/")
-def post_predict(params: ModelParams):
-
-    # param_dict = params.dict()
-    # print(param_dict)
-    pred = get_prediction(params.param1, params.param2)
+@app.get("/predict/{param1}/{param2}/{param3}/{param4}/{param5}/{param6}/{param7}/{param8}/{param9}/{param10}/{param11}/{param12}/{param13}/{param14}")
+def predict(param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14):
+    data = [[param1,param2,param3,param4,param5,param6,param7,param8,param9,param10,param11,param12,param13,param14]]
+    pred = get_prediction(data, param8)
 
     return pred
-
