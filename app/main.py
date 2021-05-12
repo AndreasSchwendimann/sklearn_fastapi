@@ -37,8 +37,6 @@ def apply_model(data, duration, model=loaded_model, scaler=loaded_scaler, refere
     data_scaled = scaler.transform(data)
     predicted_cluster = model.predict(data_scaled)[0]
     # subset reference & rank new meeting duration
-    print(int(predicted_cluster))
-    print(reference_table.cluster)
     if int(duration) > int(reference_table[reference_table.cluster == int(predicted_cluster)].cutoff):
         show_alert = True
     else:
