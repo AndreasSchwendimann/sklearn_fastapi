@@ -1,5 +1,6 @@
 # Dockerized FastAPI for FE-DS Trial Day
 This repository can be used to deploy a local instance of the pipeline used in the trial day challenge.
+The currently implemented model is a GMM with 5 clusters.
 
 ## Clone, Build and Run
 Clone this repository, navigate to the cloned folder to build the image and start a container:
@@ -18,7 +19,7 @@ The api documentation is generated automatically by FastAPI and is available whe
 
 ## Verification
 Returns True:  
-http://localhost/predict/?meeting_data=3,5,0.6507936507936508,0.3492063492063492,0,0,63,18001,0.15873015873015872,0.6031746031746031,0,0,0.23809523809523808,0
+http://localhost/predict/?meeting_data=25,1,0.7142857142857143,0.2857142857142857,0,0,14,24300,0,0.7857142857142857,0,0,0.21428571428571427,0
 
 Returns False:  
-http://localhost/predict/?meeting_data=12,8,0.1774193548387097,0.45161290322580644,0.3709677419354839,0,62,17100,0,1,0,0,0,0
+http://localhost/predict/?meeting_data=10,9,0.9230769230769231,0.07692307692307693,0,0,13,21600,0,0.8461538461538461,0,0,0.15384615384615385,0
