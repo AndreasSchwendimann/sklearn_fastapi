@@ -24,10 +24,10 @@ def apply_model(
     data, duration, model=loaded_model, scaler=loaded_scaler, reference=reference_table
 ):
     # apply scaler & model to new meeting
-    data_scaled = scaler.transform([data+[duration]])
+    data_scaled = scaler.transform([data])
     predicted_cluster = model.predict(data_scaled)[0]
     # subset reference & rank new meeting duration
-    if int(duration) > int(
+    if int(duration) >= int(
         reference[reference.cluster == int(predicted_cluster)].cutoff
     ):
         show_alert = True
@@ -43,13 +43,14 @@ async def read_root():
 
 @app.get("/predict/")
 def predict(
-    duration: int, meeting_data: List[str] = Query(["documents", "members",
-                                     "lvl0", "lvl1", "lvl2", "lvl3",
-                                     "items",
-                                     "cat1","cat2","cat3","cat4","cat5","cat6"])
+    meeting_data: List[str] = Query([12,8,
+                                     0.1774193548387097,0.45161290322580644,0.3709677419354839,0,
+                                     62,17100,
+                                     0,1,0,0,0,0])
 ):
 
     data = list(map(float, meeting_data[0].split(",")))
+    duration = data[7]
     kwargs = {"data": data, "duration": duration}
     print(kwargs)
 
